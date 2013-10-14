@@ -7,15 +7,15 @@ TestCase("testSignalslot", sinon.testCase({
 	{
 	},
 
-	// Scarlet.Signal .
-	"testSignalAPI": function()
+	// Signal and Slot.
+	testSignal: function()
 	{
-		var firstSignal = new Scarlet.Signal();
-		var secondSignal = new Scarlet.Signal();
+		var firstSignal = new Signal();
+		var secondSignal = new Signal();
 		
 		var foo = 1;
-		var firstSlot = new Scarlet.Slot({}, function() { foo *= 2; });
-		var secondSlot = new Scarlet.Slot({}, function() { foo *= 3; });
+		var firstSlot = new Slot({}, function() { foo *= 2; });
+		var secondSlot = new Slot({}, function() { foo *= 3; });
 
 		var spySlot1 = this.spy(firstSlot, "execute");
 		var spySlot2 = this.spy(secondSlot, "execute");
@@ -33,7 +33,6 @@ TestCase("testSignalslot", sinon.testCase({
 		sinon.assert.calledWith(spySlot1, emitArgument);
 		sinon.assert.calledWith(spySlot2, emitArgument);
 		assertEquals(2 * 3, foo);
-		//assert(spySlot1.calledBefore(spySlot2), "slots were not called in the order they were connected.");
 	}
 	
 }));
