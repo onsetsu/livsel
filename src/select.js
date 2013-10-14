@@ -1,11 +1,11 @@
 mini.Module(
-	"src/livsel"
+	"src/select"
 )
 .requires(
 
 )
 .defines(function() {
-	window.LivSel = function() {
-		
-	};
+	(function(window, undefined) {
+		window.select = function() {};
+	})(window);
 });
