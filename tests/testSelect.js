@@ -1,4 +1,4 @@
-TestCase("testLivSel", sinon.testCase({
+TestCase("testSelect", sinon.testCase({
 	setUp: function() 
 	{		
 	},
@@ -7,9 +7,8 @@ TestCase("testLivSel", sinon.testCase({
 	{
 	},
 
-	// LivSel constructor should be defined.
+	// Select method should be defined.
 	testLivSel: sinon.test(function() {
-		assertNotUndefined(LivSel);
+		assertNotUndefined(select);
 	})
-
 }));
