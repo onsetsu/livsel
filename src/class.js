@@ -43,8 +43,13 @@ mini.Module(
 			return childClass;
 		};
 		
-		var createClass = function(childConstructor, superClass) {
+		var createClass = function(childConstructor, superClass, staticMethods) {
 			var newClass = inheritsFrom(childConstructor, superClass);
+			
+			for(var staticMethodName in staticMethods) {
+				newClass.addClassMethod(staticMethodName, staticMethods[staticMethodName]);
+			};
+			
 			return newClass;
 		};
 		
@@ -60,8 +65,8 @@ mini.Module(
 		};
 		
 		ProtoObject
-			.addClassMethod("subclass", function(childConstructor) {
-				return createClass(childConstructor, this);
+			.addClassMethod("subclass", function(childConstructor, staticMethods) {
+				return createClass(childConstructor, this, staticMethods);
 			})
 			.addClassMethod("addMethod", function(methodName, method) {
 				var superCallName = "parent";

@@ -140,19 +140,42 @@ TestCase("testClass", sinon.testCase({
 		assertEquals(6, subSubObj.class.double(3));
 	},
 
-	// Subclass method should support optional static method dictionary.
-	"testClassesShouldSupportStaticMethods": function()
+	// Subclass method should support optional static method dictionary parameter.
+	"testSubclassStaticMethodsParameter": function()
 	{
-		this.subObject.addClassMethod("double", function(a) {
-			return 2*a;
-		});
+		var expectedMethod1 = function(arg) { return arg; };
+		var expectedMethod2 = function(arg) { return arg; };
+		var overWrittenExpectedMethod2 = function(arg) { return arg; };
 		
-		var subObj = new this.subObject();
-		assertEquals(4, subObj.class.double(2));
+		var subClass = Class.subclass(
+				function() { this.parent(arguments); },
+				{
+					actualMethod1: expectedMethod1,
+					actualMethod2: expectedMethod2
+				});
+		var subSubClass = Class.subclass(
+				function() { this.parent(arguments); },
+				{
+					actualMethod2: overWrittenExpectedMethod2
+				});
+		
+		var subClassObject = new subClass();
+		var subSubClassObject = new subSubClass();
+		
+		//assertEquals(5, subSubClassObject.class.actualMethod1(5));
 
-		var subSubObj = new this.subSubObject();
-		assertEquals(this.subSubObject, subSubObj.class);
-		assertEquals(6, subSubObj.class.double(3));
+		assertEquals(expectedMethod1, subClassObject.class.actualMethod1);
+		assertEquals(expectedMethod1, subClass.actualMethod1);
+		// TODO: enhance test for static method inheritance
+		///*
+		assertEquals(expectedMethod1, subSubClassObject.class.actualMethod1);
+		assertEquals(expectedMethod1, subSubClass.actualMethod1);
+		
+		//*/
+		assertEquals(expectedMethod2, subClassObject.class.actualMethod2);
+		assertEquals(expectedMethod2, subClass.actualMethod2);
+		assertEquals(overWrittenExpectedMethod2, subSubClassObject.class.actualMethod2);
+		assertEquals(overWrittenExpectedMethod2, subSubClass.actualMethod2);
 	},
 	
 	// Scarlet.Object should use initialize as constructor method.
