@@ -10,12 +10,13 @@ mini.Module(
 		
 		var subClassing = false;
 		
-		var inheritsFrom = function(childInitialize, superClass)
+		var inheritsFrom = function(superClass)
 		{
 			// Manage new object and call initialize.
 			var childClass = function(/* arguments */) {
 				if(!subClassing) {
 					this.class.addInstance(this);
+					// Initialize function is to be called, when a new object is created.
 					this.initialize.apply(this, arguments);
 					this.class.instanceCreated.emit(this);
 				};
@@ -34,11 +35,6 @@ mini.Module(
 			// TODO: find other name for parent reference
 			childClass.prototype.parent = superClass.prototype;
 			
-			// Use default implementation if no initialize was given.
-			childInitialize = childInitialize || function(/* arguments */) { this.parent(arguments); };
-			// Initialize function is to be called, when a new object is created.
-			childClass.addMethod("initialize", childInitialize);
-			
 			// TODO: add final attribute instead of using addMethod.
 			childClass.addMethod("class", childClass);
 			
@@ -52,15 +48,16 @@ mini.Module(
 		var createClass = function(superClass, methods, staticMethods) {
 			methods = methods || {};
 			staticMethods = staticMethods || {};
-			var childConstructor = methods.initialize || function(/* arguments */) { this.parent(arguments); };
 			
-			var newClass = inheritsFrom(childConstructor, superClass);
-			
+			// Actually create the new class.
+			var newClass = inheritsFrom(superClass);
+
+			// Attach all given methods to the class prototype.
 			for(var methodName in methods) {
-				if(methodName !== "initialize")
-					newClass.addMethod(methodName, methods[methodName]);
+				newClass.addMethod(methodName, methods[methodName]);
 			};
 			
+			// Attach static methods to the class (object) itself.
 			for(var staticMethodName in staticMethods) {
 				newClass.addClassMethod(staticMethodName, staticMethods[staticMethodName]);
 			};
