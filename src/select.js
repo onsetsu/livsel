@@ -6,6 +6,32 @@ mini.Module(
 )
 .defines(function() {
 	(function(window, undefined) {
-		window.select = function() {};
+		
+		var LivingSelection = Class.subclass({
+			initialize: function(type, query) {
+				this.type = type;
+				this.query = query;
+				this._arr = [];
+				
+				this.update();
+			},
+			update: function() {
+				var objects = this.type.getInstances();
+				
+				this._arr.length = 0;
+				for(var i = 0; i < objects.length; i++) {
+					if(this.query(objects[i]))
+						this._arr.push(objects[i]);
+				};
+			},
+			length: function() { return this._arr.length; }
+		}, {
+			
+		});
+		
+		window.select = function(type, query) {
+			return new LivingSelection(type, query);
+		};
+		
 	})(window);
 });

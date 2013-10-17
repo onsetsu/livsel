@@ -9,6 +9,19 @@ TestCase("testSelect", sinon.testCase({
 
 	// Select method should be defined.
 	testLivSel: sinon.test(function() {
-		//assertNotUndefined(select);
+		assertNotUndefined(select);
+	}),
+
+	// Select should return the correct number of objects.
+	testSelectAmount: sinon.test(function() {
+		var subClass = Class.subclass();
+		var expectedCount = 4;
+		for(var i = 0; i < expectedCount; i++) {
+			new subClass();
+		}
+		
+		var selection = select(subClass, function() { return true; });
+
+		assertEquals(expectedCount, selection.length());
 	})
 }));

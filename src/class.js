@@ -39,6 +39,7 @@ mini.Module(
 			childClass.addMethod("class", childClass);
 			
 			childClass.addClassMethod("instanceCreated", new Signal());
+			
 			// Introduce list of instances.
 			childClass.instances = [];
 			
@@ -125,6 +126,9 @@ mini.Module(
 			});
 		
 		Class
+			.addClassMethod("getInstances", function() {
+				return this.instances;
+			})
 			.addClassMethod("addInstance", function(instance) {
 				if(this !== Class)
 				{
