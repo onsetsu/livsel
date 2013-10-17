@@ -1,7 +1,7 @@
 TestCase("testClass", sinon.testCase({
 	setUp: function() 
 	{
-		this.subObject = Scarlet.Object.subclass(function() {});
+		this.subObject = Class.subclass(function() {});
 		this.subSubObject = this.subObject.subclass(function() {});
 		this.subSubSubObject = this.subSubObject.subclass(function() {});
 	},
@@ -9,11 +9,11 @@ TestCase("testClass", sinon.testCase({
 	tearDown: function()
 	{
 	},
-		
+	
 	// define new simple namespaces
 	"testSupportSubclassing": function()
 	{
-		var Subclass = Scarlet.Object.subclass(function(aNumber) {
+		var Subclass = Class.subclass(function(aNumber) {
 			this.aNumber = aNumber;
 		});
 		Subclass.addMethod("add", function(a){
@@ -26,11 +26,11 @@ TestCase("testClass", sinon.testCase({
 		assertEquals(subObject.aNumber, expectedNumber);
 		assertEquals(42 + 17, subObject.add(17));
 	},
-	
+
 	// The definition of a class should be chainable.
 	"testChainableClassDefinition": function()
 	{
-		var Subclass = Scarlet.Object
+		var Subclass = Class
 			.subclass(function(aNumber) {
 				this.aNumber = aNumber;
 			})
@@ -50,10 +50,10 @@ TestCase("testClass", sinon.testCase({
 		assertEquals(expectedNumber - addedNumber, subObject.sub(addedNumber));
 		
 		// Scarlet.Object should not be affected.
-		var obj = new Scarlet.Object();
+		var obj = new Class();
 		assertUndefined(obj.sub);
 	},
-	
+
 	// The instances of subclass should call the super class' constructor before its own.
 	"testChainableConstructors": function()
 	{
@@ -61,7 +61,7 @@ TestCase("testClass", sinon.testCase({
 		var subSpy = sinon.spy();
 		var subSubSpy = sinon.spy();
 
-		var Sub = Scarlet.Object.subclass(function() {
+		var Sub = Class.subclass(function() {
 			this.parent();
 			spy();
 		});
@@ -80,11 +80,11 @@ TestCase("testClass", sinon.testCase({
 		sinon.assert.calledOnce(subSubSpy);
 		sinon.assert.callOrder(spy, subSpy, subSubSpy);
 	},
-	
+
 	// The instances of subclass should call the super class' constructor before its own.
 	"testGetSet": function()
 	{
-		var obj = new (Scarlet.Object
+		var obj = new (Class
 			.subclass(function(){ this.parent(); })
 			.subclass(function(){ this.parent(); })
 		)();
@@ -99,7 +99,7 @@ TestCase("testClass", sinon.testCase({
 		var actualValue = 42;
 		
 		var spy = sinon.spy();
-		var subSubClass = Scarlet.Object.subclass(function() {
+		var subSubClass = Class.subclass(function() {
 			this.parent(arguments);
 		}).subclass(function(){
 			this.parent(arguments);
@@ -115,8 +115,8 @@ TestCase("testClass", sinon.testCase({
 	// In each object a reference to the corresponding class should be given.
 	"testSupportClassAttribute": function()
 	{
-		var obj = new Scarlet.Object();
-		assertSame(Scarlet.Object, obj.class);
+		var obj = new Class();
+		assertSame(Class, obj.class);
 
 		var subObj = new this.subObject();
 		assertSame(this.subObject, subObj.class);
@@ -139,18 +139,33 @@ TestCase("testClass", sinon.testCase({
 		assertEquals(this.subSubObject, subSubObj.class);
 		assertEquals(6, subSubObj.class.double(3));
 	},
+
+	// Subclass method should support optional static method dictionary.
+	"testClassesShouldSupportStaticMethods": function()
+	{
+		this.subObject.addClassMethod("double", function(a) {
+			return 2*a;
+		});
+		
+		var subObj = new this.subObject();
+		assertEquals(4, subObj.class.double(2));
+
+		var subSubObj = new this.subSubObject();
+		assertEquals(this.subSubObject, subSubObj.class);
+		assertEquals(6, subSubObj.class.double(3));
+	},
 	
 	// Scarlet.Object should use initialize as constructor method.
 	"testScarletObjectShouldUseInitializeAsConstructorMehtod": function()
 	{
-		assertNotUndefined(new Scarlet.Object().initialize);
+		assertNotUndefined(new Class().initialize);
 		assertNotUndefined(new this.subObject().initialize);
 	},
 	
 	// Scarlet.Object should use initialize as constructor method.
 	"testMultipleChainableInititializes": function()
 	{
-		var subClass = Scarlet.Object
+		var subClass = Class
 			.subclass(function() { this.parent(); this.a = 1; })
 			// this b should be overwritten
 			.subclass(function() { this.parent(); this.b = 2; })
@@ -165,7 +180,7 @@ TestCase("testClass", sinon.testCase({
 	// If no initialize is given, a standard implementation should be chosen to call the parent initialize.
 	"testNoInitializeGiven": function()
 	{
-		var subClass = Scarlet.Object
+		var subClass = Class
 			.subclass(function() { this.parent(); this.a = 1; })
 			// this b should be overwritten
 			.subclass()
@@ -182,8 +197,8 @@ TestCase("testClass", sinon.testCase({
 		var initializeSpy = sinon.spy();
 		var slotSpy = sinon.spy();
 
-		var subClass = Scarlet.Object.subclass(function() { this.parent(); initializeSpy.apply({}, arguments); });
-		var slot = new Scarlet.Slot({}, slotSpy);
+		var subClass = Class.subclass(function() { this.parent(); initializeSpy.apply({}, arguments); });
+		var slot = new Slot({}, slotSpy);
 		subClass.instanceCreated.connect(slot);
 		
 		var expectedArg1 = "hello";
@@ -196,6 +211,11 @@ TestCase("testClass", sinon.testCase({
 		sinon.assert.callOrder(initializeSpy, slotSpy);
 		sinon.assert.calledWith(initializeSpy, expectedArg1, expectedArg2);
 		sinon.assert.calledWith(slotSpy, actualObject);
+	},
+	
+	
+	"testTest": function()
+	{
 	}
 	
 }));
