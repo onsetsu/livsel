@@ -49,8 +49,17 @@ mini.Module(
 			return childClass;
 		};
 		
-		var createClass = function(childConstructor, superClass, staticMethods) {
+		var createClass = function(superClass, methods, staticMethods) {
+			methods = methods || {};
+			staticMethods = staticMethods || {};
+			var childConstructor = methods.initialize || function(/* arguments */) { this.parent(arguments); };
+			
 			var newClass = inheritsFrom(childConstructor, superClass);
+			
+			for(var methodName in methods) {
+				if(methodName !== "initialize")
+					newClass.addMethod(methodName, methods[methodName]);
+			};
 			
 			for(var staticMethodName in staticMethods) {
 				newClass.addClassMethod(staticMethodName, staticMethods[staticMethodName]);
@@ -60,7 +69,7 @@ mini.Module(
 		};
 		
 		/**
-		 * Class provides basic functionality for all objects in the library.
+		 * Hidden class provides basic functionality for all objects in the library.
 		 * 
 		 */
 		var ProtoObject = function protoConstructor() {};
@@ -71,8 +80,8 @@ mini.Module(
 		};
 		
 		ProtoObject
-			.addClassMethod("subclass", function(childConstructor, staticMethods) {
-				return createClass(childConstructor, this, staticMethods);
+			.addClassMethod("subclass", function(methods, staticMethods) {
+				return createClass(this, methods, staticMethods);
 			})
 			.addClassMethod("addMethod", function(methodName, method) {
 				var superCallName = "parent";
@@ -105,8 +114,10 @@ mini.Module(
 
 		
 		Class = ProtoObject
-			.subclass(function constructor() {
-				this.__cache = {};
+			.subclass({
+				initialize: function constructor() {
+					this.__cache = {};
+				}
 			})
 			.addMethod("set", function(name, value) {
 				this.__cache[name] = value;

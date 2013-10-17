@@ -1,9 +1,9 @@
 TestCase("testClass", sinon.testCase({
 	setUp: function() 
 	{
-		this.subObject = Class.subclass(function() {});
-		this.subSubObject = this.subObject.subclass(function() {});
-		this.subSubSubObject = this.subSubObject.subclass(function() {});
+		this.subObject = Class.subclass();
+		this.subSubObject = this.subObject.subclass();
+		this.subSubSubObject = this.subSubObject.subclass();
 	},
 	
 	tearDown: function()
@@ -13,8 +13,10 @@ TestCase("testClass", sinon.testCase({
 	// define new simple namespaces
 	"testSupportSubclassing": function()
 	{
-		var Subclass = Class.subclass(function(aNumber) {
-			this.aNumber = aNumber;
+		var Subclass = Class.subclass({
+			initialize: function(aNumber) {
+				this.aNumber = aNumber;
+			}
 		});
 		Subclass.addMethod("add", function(a){
 			return this.aNumber + a;
@@ -31,8 +33,10 @@ TestCase("testClass", sinon.testCase({
 	"testChainableClassDefinition": function()
 	{
 		var Subclass = Class
-			.subclass(function(aNumber) {
-				this.aNumber = aNumber;
+			.subclass({
+				initialize: function(aNumber) {
+					this.aNumber = aNumber;
+				}
 			})
 			.addMethod("add", function(a){
 				return this.aNumber + a;
@@ -61,17 +65,23 @@ TestCase("testClass", sinon.testCase({
 		var subSpy = sinon.spy();
 		var subSubSpy = sinon.spy();
 
-		var Sub = Class.subclass(function() {
-			this.parent();
-			spy();
+		var Sub = Class.subclass({
+			initialize: function() {
+				this.parent();
+				spy();
+			}
 		});
-		var SubSub = Sub.subclass(function() {
-			this.parent();
-			subSpy();
+		var SubSub = Sub.subclass({
+			initialize: function() {
+				this.parent();
+				subSpy();
+			}
 		});
-		var SubSubSub = SubSub.subclass(function() {
-			this.parent();
-			subSubSpy();
+		var SubSubSub = SubSub.subclass({
+			initialize: function() {
+				this.parent();
+				subSubSpy();
+			}
 		});
 
 		new SubSubSub();
@@ -85,8 +95,8 @@ TestCase("testClass", sinon.testCase({
 	"testGetSet": function()
 	{
 		var obj = new (Class
-			.subclass(function(){ this.parent(); })
-			.subclass(function(){ this.parent(); })
+			.subclass({ initialize: function(){ this.parent(); } })
+			.subclass({ initialize: function(){ this.parent(); } })
 		)();
 		obj.set("foo", 42);
 		assertEquals(42, obj.get("foo"));
@@ -99,10 +109,14 @@ TestCase("testClass", sinon.testCase({
 		var actualValue = 42;
 		
 		var spy = sinon.spy();
-		var subSubClass = Class.subclass(function() {
-			this.parent(arguments);
-		}).subclass(function(){
-			this.parent(arguments);
+		var subSubClass = Class.subclass({
+			initialize: function() {
+				this.parent(arguments);
+			}
+		}).subclass({
+			initialize: function(){
+				this.parent(arguments);
+			}
 		}).addMethod("set", function(name, value) {
 			this.parent(name, value + addedValue);
 		});
@@ -148,13 +162,17 @@ TestCase("testClass", sinon.testCase({
 		var overWrittenExpectedMethod2 = function(arg) { return arg; };
 		
 		var subClass = Class.subclass(
-				function() { this.parent(arguments); },
+				{
+					initialize: function() { this.parent(arguments); }
+				},
 				{
 					actualMethod1: expectedMethod1,
 					actualMethod2: expectedMethod2
 				});
 		var subSubClass = Class.subclass(
-				function() { this.parent(arguments); },
+				{
+					initialize: function() { this.parent(arguments); }
+				},
 				{
 					actualMethod2: overWrittenExpectedMethod2
 				});
@@ -189,10 +207,10 @@ TestCase("testClass", sinon.testCase({
 	"testMultipleChainableInititializes": function()
 	{
 		var subClass = Class
-			.subclass(function() { this.parent(); this.a = 1; })
+			.subclass({ initialize: function() { this.parent(); this.a = 1; } })
 			// this b should be overwritten
-			.subclass(function() { this.parent(); this.b = 2; })
-			.subclass(function() { this.parent(); this.b = 3; })
+			.subclass({ initialize: function() { this.parent(); this.b = 2; } })
+			.subclass({ initialize: function() { this.parent(); this.b = 3; } })
 			;
 		
 		var subObject = new subClass();
@@ -204,7 +222,7 @@ TestCase("testClass", sinon.testCase({
 	"testNoInitializeGiven": function()
 	{
 		var subClass = Class
-			.subclass(function() { this.parent(); this.a = 1; })
+			.subclass({ initialize: function() { this.parent(); this.a = 1; } })
 			// this b should be overwritten
 			.subclass()
 			;
@@ -220,7 +238,10 @@ TestCase("testClass", sinon.testCase({
 		var initializeSpy = sinon.spy();
 		var slotSpy = sinon.spy();
 
-		var subClass = Class.subclass(function() { this.parent(); initializeSpy.apply({}, arguments); });
+		var subClass = Class.subclass({
+				initialize: function() { this.parent(); initializeSpy.apply({}, arguments)
+			}
+		});
 		var slot = new Slot({}, slotSpy);
 		subClass.instanceCreated.connect(slot);
 		
