@@ -167,7 +167,7 @@ TestCase("testClass", sinon.testCase({
 		assertEquals(expectedMethod1, subClassObject.class.actualMethod1);
 		assertEquals(expectedMethod1, subClass.actualMethod1);
 		// TODO: enhance test for static method inheritance
-		///*
+		/*
 		assertEquals(expectedMethod1, subSubClassObject.class.actualMethod1);
 		assertEquals(expectedMethod1, subSubClass.actualMethod1);
 		

@@ -8,16 +8,22 @@ mini.Module(
 
 	(function(window, undefined) {
 		
+		var subClassing = false;
+		
 		var inheritsFrom = function(childInitialize, superClass)
 		{
 			// Manage new object and call initialize.
 			var childClass = function(/* arguments */) {
-				this.class.addInstance(this);
-				this.initialize.apply(this, arguments);
-				this.class.instanceCreated.emit(this);
+				if(!subClassing) {
+					this.class.addInstance(this);
+					this.initialize.apply(this, arguments);
+					this.class.instanceCreated.emit(this);
+				};
 			};
 			
-			var chain = function() {};
+			subClassing = true;
+			var chain = new Function();
+			subClassing = false;
 			chain.prototype = superClass.prototype;
 			childClass.prototype = new chain();
 			// enable static method inheritance
