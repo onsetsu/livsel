@@ -25,6 +25,8 @@ mini.Module(
 				};
 			},
 			length: function() { return this._arr.length; }
+			// TODO: map, filter, reduce, pluck
+			// TODO: enter, exit (data join)
 		}, {
 			
 		});
