@@ -115,7 +115,11 @@ mini.Module(
 		
 		ProtoObject.prototype.class = ProtoObject;
 
-		
+		/**
+		 * Public visible base class Class.
+		 * All objects listened in selections should inhere from this class.
+		 * 
+		 */
 		Class = ProtoObject
 			.subclass({
 				initialize: function constructor() {
