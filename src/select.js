@@ -15,7 +15,8 @@ mini.Module(
 				
 				// Hook into instance creation and deletion.
 				type.instanceCreated.connect(new Slot(this, this.update));
-				
+				type.instanceDeleted.connect(new Slot(this, this.update));
+
 				this.update();
 			},
 			update: function() {

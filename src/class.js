@@ -38,7 +38,9 @@ mini.Module(
 			// TODO: add final attribute instead of using addMethod.
 			childClass.addMethod("class", childClass);
 			
+			// Add signals for listening to object creation and destruction.
 			childClass.addClassMethod("instanceCreated", new Signal());
+			childClass.addClassMethod("instanceDeleted", new Signal());
 			
 			// Introduce list of instances.
 			childClass.instances = [];
@@ -67,7 +69,7 @@ mini.Module(
 		};
 		
 		/**
-		 * Hidden class provides basic functionality for all objects in the library.
+		 * Hidden class ProtoObject provides basic functionality for all objects in the library.
 		 * 
 		 */
 		var ProtoObject = function protoConstructor() {};
@@ -145,6 +147,7 @@ mini.Module(
 				if(index !== -1)
 				{
 					this.instances.splice(index, 1);
+					this.instanceDeleted.emit(instance);
 				}
 				else
 				{

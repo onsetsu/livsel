@@ -30,11 +30,15 @@ TestCase("testSelect", sinon.testCase({
 		var subClass = Class.subclass();
 		var selection = select(subClass, function() { return true; });
 		
+		var instances = [];
 		var expectedCount = 4;
 		for(var i = 0; i < expectedCount; i++) {
-			new subClass();
+			instances.push(new subClass());
 		}
-
 		assertEquals(expectedCount, selection.length());
+		
+		instances[1].destroy();
+		instances[2].destroy();
+		assertEquals(2, selection.length());
 	})
 }));
