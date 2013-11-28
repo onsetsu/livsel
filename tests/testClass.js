@@ -130,16 +130,16 @@ TestCase("testClass", sinon.testCase({
 	"testSupportClassAttribute": function()
 	{
 		var obj = new Class();
-		assertSame(Class, obj.class);
+		assertSame(Class, obj.Class);
 
 		var subObj = new this.subObject();
-		assertSame(this.subObject, subObj.class);
+		assertSame(this.subObject, subObj.Class);
 
 		var subSubObj = new this.subSubObject();
-		assertSame(this.subSubObject, subSubObj.class);
+		assertSame(this.subSubObject, subSubObj.Class);
 	},
 	
-	// Static methods should be available using the class atrribute.
+	// Static methods should be available using the Class atrribute.
 	"testClassesShouldSupportStaticMethods": function()
 	{
 		this.subObject.addClassMethod("double", function(a) {
@@ -147,11 +147,11 @@ TestCase("testClass", sinon.testCase({
 		});
 		
 		var subObj = new this.subObject();
-		assertEquals(4, subObj.class.double(2));
+		assertEquals(4, subObj.Class.double(2));
 
 		var subSubObj = new this.subSubObject();
-		assertEquals(this.subSubObject, subSubObj.class);
-		assertEquals(6, subSubObj.class.double(3));
+		assertEquals(this.subSubObject, subSubObj.Class);
+		assertEquals(6, subSubObj.Class.double(3));
 	},
 
 	// Subclass method should support optional static method dictionary parameter.
@@ -180,19 +180,19 @@ TestCase("testClass", sinon.testCase({
 		var subClassObject = new subClass();
 		var subSubClassObject = new subSubClass();
 		
-		//assertEquals(5, subSubClassObject.class.actualMethod1(5));
+		//assertEquals(5, subSubClassObject.Class.actualMethod1(5));
 
-		assertEquals(expectedMethod1, subClassObject.class.actualMethod1);
+		assertEquals(expectedMethod1, subClassObject.Class.actualMethod1);
 		assertEquals(expectedMethod1, subClass.actualMethod1);
 		// TODO: enhance test for static method inheritance
 		/*
-		assertEquals(expectedMethod1, subSubClassObject.class.actualMethod1);
+		assertEquals(expectedMethod1, subSubClassObject.Class.actualMethod1);
 		assertEquals(expectedMethod1, subSubClass.actualMethod1);
 		
 		//*/
-		assertEquals(expectedMethod2, subClassObject.class.actualMethod2);
+		assertEquals(expectedMethod2, subClassObject.Class.actualMethod2);
 		assertEquals(expectedMethod2, subClass.actualMethod2);
-		assertEquals(overWrittenExpectedMethod2, subSubClassObject.class.actualMethod2);
+		assertEquals(overWrittenExpectedMethod2, subSubClassObject.Class.actualMethod2);
 		assertEquals(overWrittenExpectedMethod2, subSubClass.actualMethod2);
 	},
 	
@@ -258,8 +258,51 @@ TestCase("testClass", sinon.testCase({
 	},
 	
 	
-	"testTest": function()
+	"testClassAndSuperClassReferences": function()
 	{
-	}
+		var subClass = Class.subclass();
+		var subSubClass = subClass.subclass();
+		
+		var subObject = new subClass();
+		var subSubObject = new subSubClass();
+		
+		assertNotEquals(Class, subObject.Class);
+		assertNotEquals(Class, subSubObject.Class);
+		assertNotEquals(subObject.Class, subSubObject.Class);
+		
+		assertEquals(subSubObject.Class.superClass, subObject.Class);
+		assertEquals(subObject.Class.superClass, Class);
+	},
 	
+	"testEmitInstanceCreatedOnCreation": function()
+	{
+		var subClass = Class.subclass();
+		var subSubClass = subClass.subclass();
+		var subSubSubClass = subSubClass.subclass();
+		
+		var classSlot = new Slot({}, function() {});
+		var subClassSlot = new Slot({}, function() {});
+		var subSubClassSlot = new Slot({}, function() {});
+		var subSubSubClassSlot = new Slot({}, function() {});
+
+		var classSlotSpy = this.spy(classSlot, "execute");
+		var subClassSlotSpy = this.spy(subClassSlot, "execute");
+		var subSubClassSlotSpy = this.spy(subSubClassSlot, "execute");
+		var subSubSubClassSlotSpy = this.spy(subSubSubClassSlot, "execute");
+
+		Class.instanceCreated.connect(classSlot);
+		subClass.instanceCreated.connect(subClassSlot);
+		subSubClass.instanceCreated.connect(subSubClassSlot);
+		subSubSubClass.instanceCreated.connect(subSubSubClassSlot);
+
+		var subSubObject = new subSubClass();
+		
+		// TODO: search correct method
+		//sinon.assert.calledZero(subSubSubClassSlotSpy, 0);
+		sinon.assert.calledOnce(classSlotSpy);
+		sinon.assert.calledOnce(subClassSlotSpy);
+		sinon.assert.calledOnce(subSubClassSlotSpy);
+		sinon.assert.callOrder(classSlotSpy, subClassSlotSpy, subSubClassSlotSpy);
+	}
+
 }));

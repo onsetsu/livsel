@@ -15,10 +15,9 @@ mini.Module(
 			// Manage new object and call initialize.
 			var childClass = function(/* arguments */) {
 				if(!subClassing) {
-					this.class.addInstance(this);
 					// Initialize function is to be called, when a new object is created.
 					this.initialize.apply(this, arguments);
-					this.class.instanceCreated.emit(this);
+					this.Class.addInstance(this);
 				};
 			};
 			
@@ -36,10 +35,14 @@ mini.Module(
 			childClass.prototype.parent = superClass.prototype;
 			
 			// TODO: add final attribute instead of using addMethod.
-			childClass.addMethod("class", childClass);
+			//childClass.addMethod("class", childClass);
+			//childClass.class = childClass;
+			childClass.addMethod("Class", childClass);
+			childClass.Class = childClass;
 			
 			// Add signals for listening to object creation and destruction.
 			childClass.addClassMethod("instanceCreated", new Signal());
+			childClass.addClassMethod("instanceModified", new Signal());
 			childClass.addClassMethod("instanceDeleted", new Signal());
 			
 			// Introduce list of instances.
@@ -137,6 +140,7 @@ mini.Module(
 					this.superClass.addInstance(instance);
 				}
 				this.instances.push(instance);
+				this.instanceCreated.emit(instance);
 			})
 			.addClassMethod("removeInstance", function(instance) {
 				if(this !== Class)
@@ -155,7 +159,7 @@ mini.Module(
 				}
 			})
 			.addMethod("destroy", function() {
-				this.class.removeInstance(this);
+				this.Class.removeInstance(this);
 			});
 
 	})(window);
