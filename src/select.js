@@ -16,6 +16,7 @@ mini.Module(
 				// Hook into instance creation and deletion.
 				var updateSelection = new Slot(this, this.update);
 				type.instanceCreated.connect(updateSelection);
+				type.instanceModified.connect(updateSelection);
 				type.instanceDeleted.connect(updateSelection);
 
 				this.update();
@@ -37,7 +38,8 @@ mini.Module(
 			 * accessing functions
 			 * contains, each
 			 * 
-			 * TODO: enter, exit (data/object join)
+			 * TODO: data/object join
+			 * enter, exit
 			 */
 			// 
 			// 
