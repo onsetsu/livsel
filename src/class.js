@@ -35,10 +35,8 @@ mini.Module(
 			childClass.prototype.parent = superClass.prototype;
 			
 			// TODO: add final attribute instead of using addMethod.
-			//childClass.addMethod("class", childClass);
-			//childClass.class = childClass;
 			childClass.addMethod("Class", childClass);
-			childClass.Class = childClass;
+			//childClass.Class = childClass;
 			
 			// Add signals for listening to object creation and destruction.
 			childClass.addClassMethod("instanceCreated", new Signal());
