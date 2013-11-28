@@ -23,5 +23,18 @@ TestCase("testSelect", sinon.testCase({
 		var selection = select(subClass, function() { return true; });
 
 		assertEquals(expectedCount, selection.length());
+	}),
+
+	// Select should return the correct number of objects.
+	testChangeAmountByCreationAndDestruction: sinon.test(function() {
+		var subClass = Class.subclass();
+		var selection = select(subClass, function() { return true; });
+		
+		var expectedCount = 4;
+		for(var i = 0; i < expectedCount; i++) {
+			new subClass();
+		}
+
+		assertEquals(expectedCount, selection.length());
 	})
 }));

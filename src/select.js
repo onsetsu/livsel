@@ -13,6 +13,9 @@ mini.Module(
 				this.query = query;
 				this._arr = [];
 				
+				// Hook into instance creation and deletion.
+				type.instanceCreated.connect(new Slot(this, this.update));
+				
 				this.update();
 			},
 			update: function() {
