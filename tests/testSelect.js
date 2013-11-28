@@ -20,7 +20,7 @@ TestCase("testSelect", sinon.testCase({
 			new subClass();
 		}
 		
-		var selection = select(subClass, function() { return true; });
+		var selection = select(subClass);
 
 		assertEquals(expectedCount, selection.length());
 	}),
@@ -28,17 +28,45 @@ TestCase("testSelect", sinon.testCase({
 	// Select should return the correct number of objects.
 	testChangeAmountByCreationAndDestruction: sinon.test(function() {
 		var subClass = Class.subclass();
-		var selection = select(subClass, function() { return true; });
-		
+		var subSubClass = subClass.subclass();
+		var selection = select(subClass);
+
 		var instances = [];
 		var expectedCount = 4;
 		for(var i = 0; i < expectedCount; i++) {
-			instances.push(new subClass());
+			instances.push(new subSubClass());
 		}
 		assertEquals(expectedCount, selection.length());
 		
+		// Delete 2 instances.
 		instances[1].destroy();
 		instances[2].destroy();
-		assertEquals(2, selection.length());
+		assertEquals(expectedCount - 2, selection.length());
+	}),
+
+	// Select should return only objects matching given query.
+	testMatchGivenQuery: sinon.test(function() {
+		var subClass = Class.subclass({
+			initialize: function(param) {
+				this.param = param;
+			}
+		});
+		var query = function(subObject) {
+			return subObject.param >= 2;
+		};
+		
+		var selection = select(subClass, query);
+
+		var instances = [];
+		var numberInstances = 4;
+		for(var i = 0; i < numberInstances; i++) {
+			instances.push(new subClass(i));
+		}
+		var expectedCount = 0;
+		for(var i = 0; i < numberInstances; i++) {
+			if(query(instances[i])) expectedCount++;
+		}
+
+		assertEquals(expectedCount, selection.length());
 	})
 }));

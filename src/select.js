@@ -10,12 +10,13 @@ mini.Module(
 		var LivingSelection = Class.subclass({
 			initialize: function(type, query) {
 				this.type = type;
-				this.query = query;
+				this.query = query || function() { return true; };
 				this._arr = [];
 				
 				// Hook into instance creation and deletion.
-				type.instanceCreated.connect(new Slot(this, this.update));
-				type.instanceDeleted.connect(new Slot(this, this.update));
+				var updateSelection = new Slot(this, this.update);
+				type.instanceCreated.connect(updateSelection);
+				type.instanceDeleted.connect(updateSelection);
 
 				this.update();
 			},
@@ -29,8 +30,17 @@ mini.Module(
 				};
 			},
 			length: function() { return this._arr.length; }
-			// TODO: map, filter, reduce, pluck
-			// TODO: enter, exit (data join)
+			/*
+			 * TODO: continuous methods
+			 * map, filter, reduce, pluck, group
+			 * 
+			 * accessing functions
+			 * contains, each
+			 * 
+			 * TODO: enter, exit (data/object join)
+			 */
+			// 
+			// 
 		}, {
 			
 		});
