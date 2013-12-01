@@ -2,7 +2,8 @@ mini.Module(
 	"src/select"
 )
 .requires(
-	"src/class"
+	"src/class",
+	"src/signalslot"
 )
 .defines(function() {
 	(function(window, undefined) {
