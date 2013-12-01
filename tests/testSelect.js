@@ -68,5 +68,23 @@ TestCase("testSelect", sinon.testCase({
 		}
 
 		assertEquals(expectedCount, selection.length());
+	}),
+
+	// Select operation should be accessible as static method of Class for convenience.
+	testConvenientSelect: sinon.test(function() {
+		var subClass = Class.subclass();
+		
+		var query = function(subObject) {
+			return subObject.param >= 2;
+		};
+		
+		var expectedNumberOfInstances = 4;
+		for(var i = 0; i < expectedNumberOfInstances; i++) {
+			new subClass();
+		}
+
+		var selection = subClass.select();
+
+		assertEquals(expectedNumberOfInstances, selection.length());
 	})
 }));

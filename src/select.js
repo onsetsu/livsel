@@ -51,5 +51,10 @@ mini.Module(
 			return new LivingSelection(type, query);
 		};
 		
+		// Add convenient method to call select directly on a Class.
+		window.Class.addClassMethod("select", function(query) {
+			return window.select(this, query);
+		});
+		
 	})(window);
 });
